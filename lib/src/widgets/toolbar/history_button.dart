@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/src/config/toolbar_style.dart';
+import 'package:provider/src/provider.dart';
 
 import '../../../flutter_quill.dart';
 import 'quill_icon_button.dart';
@@ -23,46 +25,44 @@ class HistoryButton extends StatefulWidget {
 
 class _HistoryButtonState extends State<HistoryButton> {
   Color? _iconColor;
-  late ThemeData theme;
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
-    _setIconColor();
+    final style = context.watch<QuillToolbarStyle>();
+    _setIconColor(style);
 
-    final fillColor = theme.canvasColor;
     widget.controller.changes.listen((event) async {
-      _setIconColor();
+      _setIconColor(style);
     });
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,
       size: widget.iconSize * 1.77,
       icon: Icon(widget.icon, size: widget.iconSize, color: _iconColor),
-      fillColor: fillColor,
-      onPressed: _changeHistory,
+      fillColor: style.colorToolbar,
+      onPressed: () => _changeHistory(style),
     );
   }
 
-  void _setIconColor() {
+  void _setIconColor(QuillToolbarStyle style) {
     if (!mounted) return;
 
     if (widget.undo) {
       setState(() {
         _iconColor = widget.controller.hasUndo
-            ? theme.iconTheme.color
-            : theme.disabledColor;
+            ? style.buttonStyle.colorIconEnabled
+            : style.buttonStyle.colorIconDisabled;
       });
     } else {
       setState(() {
         _iconColor = widget.controller.hasRedo
-            ? theme.iconTheme.color
-            : theme.disabledColor;
+            ? style.buttonStyle.colorIconEnabled
+            : style.buttonStyle.colorIconDisabled;
       });
     }
   }
 
-  void _changeHistory() {
+  void _changeHistory(QuillToolbarStyle style) {
     if (widget.undo) {
       if (widget.controller.hasUndo) {
         widget.controller.undo();
@@ -73,6 +73,6 @@ class _HistoryButtonState extends State<HistoryButton> {
       }
     }
 
-    _setIconColor();
+    _setIconColor(style);
   }
 }

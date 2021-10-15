@@ -85,7 +85,6 @@ class _ToggleCheckListButtonState extends State<ToggleCheckListButton> {
       context,
       Attribute.unchecked,
       widget.icon,
-      widget.fillColor,
       _isToggled,
       _toggleAttribute,
       widget.iconSize,

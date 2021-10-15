@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/src/config/toolbar_style.dart';
+import 'package:provider/src/provider.dart';
 
 import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
@@ -10,7 +12,6 @@ typedef ToggleStyleButtonBuilder = Widget Function(
   BuildContext context,
   Attribute attribute,
   IconData icon,
-  Color? fillColor,
   bool? isToggled,
   VoidCallback? onPressed, [
   double iconSize,
@@ -60,7 +61,6 @@ class _ToggleStyleButtonState extends State<ToggleStyleButton> {
       context,
       widget.attribute,
       widget.icon,
-      widget.fillColor,
       _isToggled,
       _toggleAttribute,
       widget.iconSize,
@@ -99,9 +99,7 @@ class _ToggleStyleButtonState extends State<ToggleStyleButton> {
   }
 
   void _toggleAttribute() {
-    widget.controller.formatSelection(_isToggled!
-        ? Attribute.clone(widget.attribute, null)
-        : widget.attribute);
+    widget.controller.formatSelection(_isToggled! ? Attribute.clone(widget.attribute, null) : widget.attribute);
   }
 }
 
@@ -109,21 +107,18 @@ Widget defaultToggleStyleButtonBuilder(
   BuildContext context,
   Attribute attribute,
   IconData icon,
-  Color? fillColor,
   bool? isToggled,
   VoidCallback? onPressed, [
   double iconSize = kDefaultIconSize,
 ]) {
-  final theme = Theme.of(context);
+  final style = context.watch<QuillToolbarStyle>();
   final isEnabled = onPressed != null;
   final iconColor = isEnabled
       ? isToggled == true
-          ? theme.primaryIconTheme.color
-          : theme.iconTheme.color
-      : theme.disabledColor;
-  final fill = isToggled == true
-      ? theme.toggleableActiveColor
-      : fillColor ?? theme.canvasColor;
+          ? style.buttonStyle.colorIconSelected
+          : style.buttonStyle.colorIconEnabled
+      : style.buttonStyle.colorIconDisabled;
+  final fill = isToggled == true ? style.buttonStyle.colorBackgroundSelected : style.colorToolbar;
   return QuillIconButton(
     highlightElevation: 0,
     hoverElevation: 0,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/widgets/toolbar.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/documents/attribute.dart';
 import '../controller.dart';
@@ -50,7 +52,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final style = context.watch<QuillToolbarStyle>();
     final isEnabled = !widget.controller.selection.isCollapsed;
     final pressedHandler = isEnabled ? () => _openLinkDialog(context) : null;
     return QuillIconButton(
@@ -60,9 +62,9 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
       icon: Icon(
         widget.icon ?? Icons.link,
         size: widget.iconSize,
-        color: isEnabled ? theme.iconTheme.color : theme.disabledColor,
+        color: isEnabled ? style.buttonStyle.colorIconEnabled : style.buttonStyle.colorIconDisabled,
       ),
-      fillColor: Theme.of(context).canvasColor,
+      fillColor: style.colorToolbar,
       onPressed: pressedHandler,
     );
   }

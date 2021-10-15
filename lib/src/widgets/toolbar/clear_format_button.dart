@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/widgets/toolbar.dart';
+import 'package:provider/src/provider.dart';
 
 import '../../../flutter_quill.dart';
 import 'quill_icon_button.dart';
@@ -23,9 +25,9 @@ class ClearFormatButton extends StatefulWidget {
 class _ClearFormatButtonState extends State<ClearFormatButton> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final iconColor = theme.iconTheme.color;
-    final fillColor = theme.canvasColor;
+    final style = context.watch<QuillToolbarStyle>();
+    final iconColor = style.buttonStyle.colorIconEnabled;
+    final fillColor = style.colorToolbar;
     return QuillIconButton(
         highlightElevation: 0,
         hoverElevation: 0,

@@ -3,6 +3,9 @@ import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/documents/attribute.dart';
+import '../../models/themes/quill_dialog_theme.dart';
+import '../../models/themes/quill_icon_theme.dart';
+import '../../translations/toolbar.i18n.dart';
 import '../controller.dart';
 import '../link_dialog.dart';
 import '../toolbar.dart';
@@ -13,12 +16,16 @@ class LinkStyleButton extends StatefulWidget {
     required this.controller,
     this.iconSize = kDefaultIconSize,
     this.icon,
+    this.iconTheme,
+    this.dialogTheme,
     Key? key,
   }) : super(key: key);
 
   final QuillController controller;
   final IconData? icon;
   final double iconSize;
+  final QuillIconTheme? iconTheme;
+  final QuillDialogTheme? dialogTheme;
 
   @override
   _LinkStyleButtonState createState() => _LinkStyleButtonState();
@@ -50,22 +57,52 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
     widget.controller.removeListener(_didChangeSelection);
   }
 
+  final GlobalKey _toolTipKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final style = context.watch<QuillToolbarStyle>();
     final isEnabled = !widget.controller.selection.isCollapsed;
     final pressedHandler = isEnabled ? () => _openLinkDialog(context) : null;
-    return QuillIconButton(
-      highlightElevation: 0,
-      hoverElevation: 0,
-      size: widget.iconSize * kIconButtonFactor,
-      icon: Icon(
-        widget.icon ?? Icons.link,
-        size: widget.iconSize,
-        color: isEnabled ? style.buttonStyle.colorIconEnabled : style.buttonStyle.colorIconDisabled,
+    // return QuillIconButton(
+    //   highlightElevation: 0,
+    //   hoverElevation: 0,
+    //   size: widget.iconSize * kIconButtonFactor,
+    //   icon: Icon(
+    //     widget.icon ?? Icons.link,
+    //     size: widget.iconSize,
+    //     color: isEnabled ? style.buttonStyle.colorIconEnabled : style.buttonStyle.colorIconDisabled,
+    //   ),
+    //   fillColor: style.colorToolbar,
+    //   onPressed: pressedHandler,
+    //
+    return GestureDetector(
+      onTap: () async {
+        final dynamic tooltip = _toolTipKey.currentState;
+        tooltip.ensureTooltipVisible();
+        Future.delayed(
+          const Duration(
+            seconds: 3,
+          ),
+          tooltip.deactivate,
+        );
+      },
+      child: Tooltip(
+        key: _toolTipKey,
+        message: 'Please first select some text to transform into a link.'.i18n,
+        child: QuillIconButton(
+            highlightElevation: 0,
+            hoverElevation: 0,
+            size: widget.iconSize * kIconButtonFactor,
+            icon: Icon(
+              widget.icon ?? Icons.link,
+              size: widget.iconSize,
+              color: isEnabled ? style.buttonStyle.colorIconEnabled : style.buttonStyle.colorIconDisabled,
+            ),
+            fillColor: style.colorToolbar,
+            onPressed: pressedHandler,
+        ),
       ),
-      fillColor: style.colorToolbar,
-      onPressed: pressedHandler,
     );
   }
 
@@ -73,7 +110,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
     showDialog<String>(
       context: context,
       builder: (ctx) {
-        return const LinkDialog();
+        return LinkDialog(dialogTheme: widget.dialogTheme);
       },
     ).then(_linkSubmitted);
   }

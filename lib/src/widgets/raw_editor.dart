@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +23,7 @@ import 'delegate.dart';
 import 'editor.dart';
 import 'keyboard_listener.dart';
 import 'proxy.dart';
+import 'quill_single_child_scroll_view.dart';
 import 'raw_editor/raw_editor_state_keyboard_mixin.dart';
 import 'raw_editor/raw_editor_state_selection_delegate_mixin.dart';
 import 'raw_editor/raw_editor_state_text_input_client_mixin.dart';
@@ -173,10 +175,26 @@ class RawEditorState extends EditorState
       child = BaselineProxy(
         textStyle: _styles!.paragraph!.style,
         padding: baselinePadding,
-        child: SingleChildScrollView(
+        child: QuillSingleChildScrollView(
           controller: _scrollController,
           physics: widget.scrollPhysics,
-          child: child,
+          viewportBuilder: (_, offset) => CompositedTransformTarget(
+            link: _toolbarLayerLink,
+            child: _Editor(
+              key: _editorKey,
+              offset: offset,
+              document: widget.controller.document,
+              selection: widget.controller.selection,
+              hasFocus: _hasFocus,
+              textDirection: _textDirection,
+              startHandleLayerLink: _startHandleLayerLink,
+              endHandleLayerLink: _endHandleLayerLink,
+              onSelectionChanged: _handleSelectionChanged,
+              scrollBottomInset: widget.scrollBottomInset,
+              padding: widget.padding,
+              children: _buildChildren(_doc, context),
+            ),
+          ),
         ),
       );
     }
@@ -589,7 +607,7 @@ class RawEditorState extends EditorState
 
         if (offset != null) {
           _scrollController.animateTo(
-            offset,
+            math.min(offset, _scrollController.position.maxScrollExtent),
             duration: const Duration(milliseconds: 100),
             curve: Curves.fastOutSlowIn,
           );
@@ -716,8 +734,10 @@ class _Editor extends MultiChildRenderObjectWidget {
     required this.onSelectionChanged,
     required this.scrollBottomInset,
     this.padding = EdgeInsets.zero,
+    this.offset,
   }) : super(key: key, children: children);
 
+  final ViewportOffset? offset;
   final Document document;
   final TextDirection textDirection;
   final bool hasFocus;
@@ -731,6 +751,7 @@ class _Editor extends MultiChildRenderObjectWidget {
   @override
   RenderEditor createRenderObject(BuildContext context) {
     return RenderEditor(
+      offset,
       null,
       textDirection,
       scrollBottomInset,
@@ -749,6 +770,7 @@ class _Editor extends MultiChildRenderObjectWidget {
   void updateRenderObject(
       BuildContext context, covariant RenderEditor renderObject) {
     renderObject
+      ..offset = offset
       ..document = document
       ..setContainer(document.root)
       ..textDirection = textDirection

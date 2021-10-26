@@ -1,3 +1,24 @@
+## [2.0.12]
+* Fix the selection effect can't be seen as the textLine with background color.
+
+## [2.0.11]
+* Fix visibility of text selection handlers on scroll.
+
+## [2.0.10]
+* cursorConnt.color notify the text_line to repaint if it was disposed.
+
+## [2.0.9]
+* Improve UX when trying to add a link.
+
+## [2.0.8]
+* Adding translations to the toolbar.
+
+## [2.0.7]
+* Added theming options for toolbar icons and LinkDialog.
+
+## [2.0.6]
+* Avoid runtime error when placed inside TabBarView.
+
 ## [2.0.5]
 * Support inline code formatting.
 

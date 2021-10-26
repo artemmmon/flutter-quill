@@ -4,6 +4,7 @@ import 'package:provider/src/provider.dart';
 
 import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
+import '../../models/themes/quill_icon_theme.dart';
 import '../controller.dart';
 import '../toolbar.dart';
 import 'quill_icon_button.dart';
@@ -15,6 +16,7 @@ typedef ToggleStyleButtonBuilder = Widget Function(
   bool? isToggled,
   VoidCallback? onPressed, [
   double iconSize,
+  QuillIconTheme? iconTheme,
 ]);
 
 class ToggleStyleButton extends StatefulWidget {
@@ -25,6 +27,7 @@ class ToggleStyleButton extends StatefulWidget {
     this.iconSize = kDefaultIconSize,
     this.fillColor,
     this.childBuilder = defaultToggleStyleButtonBuilder,
+    this.iconTheme,
     Key? key,
   }) : super(key: key);
 
@@ -38,6 +41,9 @@ class ToggleStyleButton extends StatefulWidget {
   final QuillController controller;
 
   final ToggleStyleButtonBuilder childBuilder;
+
+  ///Specify an icon theme for the icons in the toolbar
+  final QuillIconTheme? iconTheme;
 
   @override
   _ToggleStyleButtonState createState() => _ToggleStyleButtonState();
@@ -64,6 +70,7 @@ class _ToggleStyleButtonState extends State<ToggleStyleButton> {
       _isToggled,
       _toggleAttribute,
       widget.iconSize,
+      widget.iconTheme,
     );
   }
 
@@ -110,6 +117,7 @@ Widget defaultToggleStyleButtonBuilder(
   bool? isToggled,
   VoidCallback? onPressed, [
   double iconSize = kDefaultIconSize,
+  QuillIconTheme? iconTheme,
 ]) {
   final style = context.watch<QuillToolbarStyle>();
   final isEnabled = onPressed != null;
@@ -119,6 +127,7 @@ Widget defaultToggleStyleButtonBuilder(
           : style.buttonStyle.colorIconEnabled
       : style.buttonStyle.colorIconDisabled;
   final fill = isToggled == true ? style.buttonStyle.colorBackgroundSelected : style.colorToolbar;
+
   return QuillIconButton(
     highlightElevation: 0,
     hoverElevation: 0,

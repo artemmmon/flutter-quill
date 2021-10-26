@@ -10,6 +10,7 @@ class ClearFormatButton extends StatefulWidget {
     required this.icon,
     required this.controller,
     this.iconSize = kDefaultIconSize,
+    this.iconTheme,
     Key? key,
   }) : super(key: key);
 
@@ -17,6 +18,8 @@ class ClearFormatButton extends StatefulWidget {
   final double iconSize;
 
   final QuillController controller;
+
+  final QuillIconTheme? iconTheme;
 
   @override
   _ClearFormatButtonState createState() => _ClearFormatButtonState();

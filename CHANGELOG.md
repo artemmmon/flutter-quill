@@ -1,3 +1,12 @@
+## [2.0.15]
+* implement change cursor to SystemMouseCursors.click when hovering a link styled text.
+
+## [2.0.14]
+* enable customize the checkbox widget using DefaultListBlockStyle style.
+
+## [2.0.13]
+* Improve the scrolling performance by reducing the repaint areas.
+
 ## [2.0.12]
 * Fix the selection effect can't be seen as the textLine with background color.
 

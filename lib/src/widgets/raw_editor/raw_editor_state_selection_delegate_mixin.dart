@@ -1,7 +1,8 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import '../../../utils/diff_delta.dart';
 
 import '../editor.dart';
 
@@ -9,12 +10,17 @@ mixin RawEditorStateSelectionDelegateMixin on EditorState
     implements TextSelectionDelegate {
   @override
   TextEditingValue get textEditingValue {
-    return getTextEditingValue();
+    return widget.controller.plainTextEditingValue;
   }
 
   @override
   set textEditingValue(TextEditingValue value) {
-    setTextEditingValue(value);
+    final cursorPosition = value.selection.extentOffset;
+    final oldText = widget.controller.document.toPlainText();
+    final newText = value.text;
+    final diff = getDiff(oldText, newText, cursorPosition);
+    widget.controller.replaceText(
+        diff.start, diff.deleted.length, diff.inserted, value.selection);
   }
 
   @override
@@ -50,8 +56,8 @@ mixin RawEditorStateSelectionDelegateMixin on EditorState
     final expandedRect = Rect.fromCenter(
       center: rect.center,
       width: rect.width,
-      height:
-          max(rect.height, getRenderEditor()!.preferredLineHeight(position)),
+      height: math.max(
+          rect.height, getRenderEditor()!.preferredLineHeight(position)),
     );
 
     additionalOffset = expandedRect.height >= editableSize.height
@@ -81,10 +87,8 @@ mixin RawEditorStateSelectionDelegateMixin on EditorState
 
   @override
   void userUpdateTextEditingValue(
-    TextEditingValue value,
-    SelectionChangedCause cause,
-  ) {
-    setTextEditingValue(value);
+      TextEditingValue value, SelectionChangedCause cause) {
+    textEditingValue = value;
   }
 
   @override

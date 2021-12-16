@@ -3,7 +3,6 @@ import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:provider/src/provider.dart';
 
 import '../../../flutter_quill.dart';
-import 'quill_icon_button.dart';
 
 class ClearFormatButton extends StatefulWidget {
   const ClearFormatButton({

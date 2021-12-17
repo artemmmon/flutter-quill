@@ -60,7 +60,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     required this.colorTheme,
     this.toolbarHeight = 36,
     this.filePickImpl,
-    this.multiRowsDisplay,
+    this.multiRowsDisplay = false,
     this.locale,
     Key? key,
   }) : super(key: key);
@@ -300,10 +300,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           ),
         if (showDividers &&
             isButtonGroupShown[1] &&
-            (isButtonGroupShown[2] ||
-                isButtonGroupShown[3] ||
-                isButtonGroupShown[4] ||
-                isButtonGroupShown[5]))
+            (isButtonGroupShown[2] || isButtonGroupShown[3] || isButtonGroupShown[4] || isButtonGroupShown[5]))
           VerticalDivider(
             indent: 12,
             endIndent: 12,
@@ -318,9 +315,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
         if (showDividers &&
             showHeaderStyle &&
             isButtonGroupShown[2] &&
-            (isButtonGroupShown[3] ||
-                isButtonGroupShown[4] ||
-                isButtonGroupShown[5]))
+            (isButtonGroupShown[3] || isButtonGroupShown[4] || isButtonGroupShown[5]))
           VerticalDivider(
             indent: 12,
             endIndent: 12,
@@ -358,9 +353,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
           ),
-        if (showDividers &&
-            isButtonGroupShown[3] &&
-            (isButtonGroupShown[4] || isButtonGroupShown[5]))
+        if (showDividers && isButtonGroupShown[3] && (isButtonGroupShown[4] || isButtonGroupShown[5]))
           VerticalDivider(
             indent: 12,
             endIndent: 12,
@@ -434,23 +427,23 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return I18n(
-      initialLocale: locale,
-      child: multiRowsDisplay ?? true
-          ? Wrap(
-              alignment: WrapAlignment.center,
-              runSpacing: 4,
-              spacing: 4,
-              children: children,
-            )
-          : Provider<QuillToolbarStyle>.value(
-              value: colorTheme,
-              child: Container(
+    return Provider<QuillToolbarStyle>.value(
+      value: colorTheme,
+      child: I18n(
+        initialLocale: locale,
+        child: multiRowsDisplay ?? true
+            ? Wrap(
+                alignment: WrapAlignment.center,
+                runSpacing: 4,
+                spacing: 4,
+                children: children,
+              )
+            : Container(
                 constraints: BoxConstraints.tightFor(height: preferredSize.height),
                 color: colorTheme.colorToolbar,
                 child: ArrowIndicatedButtonList(buttons: children),
               ),
-            ),
+      ),
     );
   }
 }
